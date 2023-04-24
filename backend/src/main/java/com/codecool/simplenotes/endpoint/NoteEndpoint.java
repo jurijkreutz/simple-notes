@@ -23,8 +23,9 @@ public class NoteEndpoint {
     }
 
     @PostMapping
-    public void createNote(@RequestBody Note note) {
+    public Note createNote(@RequestBody Note note) {
         noteService.createNote(note);
+        return note;
     }
 
     @DeleteMapping("/{id}")
@@ -33,8 +34,9 @@ public class NoteEndpoint {
     }
 
     @PutMapping("/{id}")
-    public void updateNote(@PathVariable("id") int id, @RequestBody Note note) {
+    public Note updateNote(@PathVariable("id") int id, @RequestBody Note note) {
         noteService.updateNote(id, note);
+        return note;
     }
 
 }
