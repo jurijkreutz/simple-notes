@@ -21,7 +21,7 @@ public class NoteServiceTests {
 
         List<Note> noteList = service.getNotes();
 
-        Assertions.assertEquals(noteList, new ArrayList<>());
+        Assertions.assertEquals(new ArrayList<>(), noteList);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class NoteServiceTests {
 
         List<Note> noteList = service.getNotes();
 
-        Assertions.assertEquals(noteList, simulatedList);
+        Assertions.assertEquals(simulatedList, noteList);
     }
 
     @Test
@@ -84,8 +84,8 @@ public class NoteServiceTests {
 
         Note returnedNote = service.updateNote(idToUpdate, updatedNote);
 
-        Assertions.assertEquals(returnedNote.getTitle(), "testtitle1");
-        Assertions.assertEquals(returnedNote.getContent(), "testcontent1");
+        Assertions.assertEquals("testtitle1", returnedNote.getTitle());
+        Assertions.assertEquals("testcontent1", returnedNote.getContent());
     }
 
 }
