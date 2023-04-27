@@ -21,20 +21,15 @@ public class NoteService {
     }
 
     public Note createNote(Note note) {
-        noteRepository.getAllNotes().add(note);
+        noteRepository.addNote(note);
         return note;
     }
 
     public void removeNote(int id) {
-        noteRepository.getAllNotes().removeIf(note -> note.getId() == id);
+        noteRepository.removeNote(id);
     }
 
     public Note updateNote(int id, Note updatedNote) {
-        Note noteToUpdate = noteRepository.getAllNotes().stream().filter(note -> note.getId() == id)
-                .findFirst()
-                .orElseThrow(PropertyNotFoundException::new);
-        noteToUpdate.setContent(updatedNote.getContent());
-        noteToUpdate.setTitle(updatedNote.getTitle());
-        return noteToUpdate;
+        return noteRepository.updateNote(id, updatedNote);
     }
 }
