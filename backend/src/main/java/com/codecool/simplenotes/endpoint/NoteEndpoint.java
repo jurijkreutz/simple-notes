@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(originPatterns = {"*"}, maxAge = 3600, allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:5174")
 @RestController
 @RequestMapping("/api/notes/")
 public class NoteEndpoint {
