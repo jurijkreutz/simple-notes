@@ -23,7 +23,7 @@ function App() {
     <>
       <h1>Simple Note App</h1>
         <AddNote notes={notes} updateNotes={updateNotes}/>
-        <NoteList notes={notes}/>
+        <NoteList notes={notes} updateNotes={updateNotes}/>
     </>
   )
 }

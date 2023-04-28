@@ -1,15 +1,13 @@
 import React from 'react'
+import Note from './Note'
 
 
-export default function NoteList({ notes }) {
+export default function NoteList({ notes, updateNotes }) {
 
   return (
     <div>
       {notes.map((note) => (
-        <div key={note.id}>
-          <h2>{note.title}</h2>
-          <p>{note.content}</p>
-        </div>
+        <Note note={note} key={note.id} updateNotes={updateNotes} />
       ))}
     </div>
   )

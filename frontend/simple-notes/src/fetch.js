@@ -23,3 +23,8 @@ export async function addNote(title, content) {
         return response.status;
       })
 }
+
+export async function removeNote(noteId) {
+  const response = await axiosInstance.delete(`/api/notes/${noteId}`);
+  return response.status;
+}

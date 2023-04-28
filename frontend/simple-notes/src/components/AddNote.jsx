@@ -1,6 +1,6 @@
 import React from 'react'
 import { addNote } from '../fetch';
-import { useState, setState } from 'react';
+import { useState } from 'react';
 
 export default function AddNote({ updateNotes }) {
 
