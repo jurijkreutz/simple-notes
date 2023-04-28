@@ -16,6 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,7 +36,7 @@ public class NoteEndpointTests {
     @Test
     public void get_BeforeAddingNotes_ShouldReturnEmptyJson() throws Exception {
         when(noteService.getNotes()).thenReturn(new ArrayList<>());
-        this.mockMvc.perform(get("/api/notes/")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/api/notes")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().json("[]"));
     }
 
@@ -46,7 +48,7 @@ public class NoteEndpointTests {
 
         when(noteService.createNote(note)).thenReturn(note);
 
-        this.mockMvc.perform(post("/api/notes/")
+        this.mockMvc.perform(post("/api/notes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(noteJson))
                 .andDo(print())
@@ -67,7 +69,7 @@ public class NoteEndpointTests {
         ObjectMapper objectMapper = new ObjectMapper();
         String noteJson = objectMapper.writeValueAsString(note);
 
-        when(noteService.updateNote(3, note)).thenReturn(note);
+        when(noteService.updateNote(eq(3), (any(Note.class)))).thenReturn(note);
 
         this.mockMvc.perform(put("/api/notes/3")
                         .contentType(MediaType.APPLICATION_JSON)
