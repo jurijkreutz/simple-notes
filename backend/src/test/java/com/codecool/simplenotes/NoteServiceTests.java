@@ -90,4 +90,23 @@ public class NoteServiceTests {
         Assertions.assertEquals("testcontent1", returnedNote.getContent());
     }
 
+    @Test
+    public void getNotesByTitle_SearchingForNotesWithTestInTitle_ReturnsOneNote() {
+        NoteRepository repository = Mockito.mock(NoteRepository.class);
+        NoteService service = new NoteService(repository);
+        Note noteToFind = new Note("title test title", "blahblah");
+        int idForNoteToFind = 1;
+        noteToFind.setId(idForNoteToFind);
+        Note noteNotToFind = new Note("title 123 title", "blahblah");
+        int idForNoteNotToFind = 2;
+        noteNotToFind.setId(idForNoteNotToFind);
+        List<Note> correctReturnList = new ArrayList<>();
+        correctReturnList.add(noteToFind);
+        Mockito.when(repository.findNotesByTitleContainsIgnoreCase("title")).thenReturn(correctReturnList);
+
+        List<Note> returnedList = service.getNotesByTitle("title");
+
+        Assertions.assertEquals(correctReturnList, returnedList);
+    }
+
 }

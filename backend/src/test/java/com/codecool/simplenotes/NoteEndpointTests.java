@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -79,5 +80,26 @@ public class NoteEndpointTests {
                 .andExpect(jsonPath("$.title").value("Updated Title"))
                 .andExpect(jsonPath("$.content").value("Test Content"));
     }
+
+    @Test
+    public void getByTitle_BeforeAddingNotes_ShouldReturnEmptyJson() throws Exception {
+        when(noteService.getNotesByTitle("test")).thenReturn(new ArrayList<>());
+        this.mockMvc.perform(get("/api/notes/title/test")).andDo(print()).andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+    }
+
+    @Test
+    public void getByTitle_AfterAddingNote_ShouldReturnCorrectJson() throws Exception {
+        List<Note> listToReturn = new ArrayList<>();
+        listToReturn.add(new Note("test test", "123"));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String listJson = objectMapper.writeValueAsString(listToReturn);
+        when(noteService.getNotesByTitle("test")).thenReturn(listToReturn);
+
+        this.mockMvc.perform(get("/api/notes/title/test")).andDo(print()).andExpect(status().isOk())
+                .andExpect(status().isOk())
+                .andExpect(content().json(listJson));
+    }
+
 }
 

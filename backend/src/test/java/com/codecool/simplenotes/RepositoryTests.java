@@ -2,73 +2,41 @@ package com.codecool.simplenotes;
 
 import com.codecool.simplenotes.model.Note;
 import com.codecool.simplenotes.model.repository.NoteRepository;
-import jakarta.el.PropertyNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@DataJpaTest
 public class RepositoryTests {
 
-    @Test
-    public void getNotes_NoNoteAdded_ReturnsEmptyList() {
-        NoteRepository repository = new NoteRepository();
-        List<Note> emptyList = new ArrayList<>();
+    @Autowired
+    private NoteRepository noteRepository;
 
-        List<Note> noteList = repository.getAllNotes();
-
-        Assertions.assertEquals(emptyList, noteList);
-    }
+    @Autowired
+    private TestEntityManager entityManager;
 
     @Test
-    public void addNote_OneNoteAdded_ReturnsCorrectList() {
-        NoteRepository repository = new NoteRepository();
-        Note noteToAdd = new Note("testtitle", "testcontent");
-        List<Note> referenceList = new ArrayList<>();
-        referenceList.add(noteToAdd);
+    public void findNotesByTitleContainsIgnoreCase_NotesWithSearchQueryExisting_ReturnsCorrectNote() {
+        Note note1 = new Note("Test 123", "Content 123");
+        Note note2 = new Note("Blah 123", "Content 123");
+        Note note3 = new Note("123 Teeeeesssssst", "Content 123");
+        entityManager.persist(note1);
+        entityManager.persist(note2);
+        entityManager.persist(note3);
+        entityManager.clear();
 
-        repository.addNote(noteToAdd);
+        List<Note> returnedNoteList = noteRepository.findNotesByTitleContainsIgnoreCase("test");
 
-        Assertions.assertEquals(referenceList, repository.getAllNotes());
-    }
-
-    @Test
-    public void removeNote_OneNoteRemoved_ReturnsEmptyList() {
-        NoteRepository repository = new NoteRepository();
-        Note noteToAdd = new Note("testtitle", "testcontent");
-        int noteId = 1;
-        noteToAdd.setId(noteId);
-        repository.addNote(noteToAdd);
-
-        repository.removeNote(noteId);
-
-        Assertions.assertEquals(new ArrayList<>(), repository.getAllNotes());
-    }
-
-    @Test
-    public void updateNote_OneNoteChanged_ReturnsUpdatedNote() {
-        NoteRepository repository = new NoteRepository();
-        Note noteToAdd = new Note("testtitle", "testcontent");
-        int noteId = 1;
-        noteToAdd.setId(noteId);
-        repository.addNote(noteToAdd);
-        Note updatedNote = new Note("testtitle1", "testcontent1");
-
-        Note returnedNote = repository.updateNote(noteId, updatedNote);
-
-        Assertions.assertEquals(updatedNote.getTitle(), returnedNote.getTitle());
-        Assertions.assertEquals(updatedNote.getContent(), returnedNote.getContent());
-    }
-
-    @Test
-    public void updateNote_NoteDoesNotExist_ThrowsException() {
-        NoteRepository repository = new NoteRepository();
-        Note updatedNote = new Note("testtitle1", "testcontent1");
-
-        Assertions.assertThrows(PropertyNotFoundException.class, () -> {
-            repository.updateNote(1, updatedNote);
-        });
+        List<Note> expectedNoteList = new ArrayList<>();
+        expectedNoteList.add(note1);
+        Assertions.assertEquals(expectedNoteList.size(), returnedNoteList.size());
+        Assertions.assertEquals(expectedNoteList.get(0).getTitle(), returnedNoteList.get(0).getTitle());
+        Assertions.assertEquals(note1.getTitle(), returnedNoteList.get(0).getTitle());
     }
 
 }
