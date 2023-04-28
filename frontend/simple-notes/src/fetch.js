@@ -17,9 +17,9 @@ export async function addNote(title, content) {
         title: title,
         content: content
       }
-    axios
+    return await axios
       .post("http://localhost:8080/api/notes", newNote)
       .then((response) => {
-        console.log(response.status);
+        return response.status;
       })
 }

@@ -1,19 +1,7 @@
 import React from 'react'
-import { useEffect, useState } from 'react';
-import { fetchNotes } from '../fetch';
 
-export default function NoteList() {
 
-    const [notes, setNotes] = useState([]);
-
-    useEffect(() => {
-      async function getNotes() {
-        setNotes(await fetchNotes());
-      }
-      getNotes();
-    }, [])
-
-    console.log(notes);
+export default function NoteList({ notes }) {
 
   return (
     <div>
