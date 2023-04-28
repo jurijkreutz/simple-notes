@@ -6,6 +6,7 @@ import jakarta.el.PropertyNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class NoteService {
@@ -17,19 +18,25 @@ public class NoteService {
     }
 
     public List<Note> getNotes() {
-        return noteRepository.getAllNotes();
+        return noteRepository.findAll();
     }
 
     public Note createNote(Note note) {
-        noteRepository.addNote(note);
+        noteRepository.save(note);
         return note;
     }
 
     public void removeNote(int id) {
-        noteRepository.removeNote(id);
+        noteRepository.deleteById(id);
     }
 
     public Note updateNote(int id, Note updatedNote) {
-        return noteRepository.updateNote(id, updatedNote);
+        Optional<Note> noteToUpdate = noteRepository.findById(id);
+        if (noteToUpdate.isPresent()) {
+            noteToUpdate.get().setTitle(updatedNote.getTitle());
+            noteToUpdate.get().setContent(updatedNote.getContent());
+            return noteRepository.save(noteToUpdate.get());
+        }
+        return null;
     }
 }

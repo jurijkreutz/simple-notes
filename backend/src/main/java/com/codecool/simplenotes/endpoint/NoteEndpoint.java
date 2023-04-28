@@ -35,8 +35,7 @@ public class NoteEndpoint {
 
     @PutMapping("/{id}")
     public Note updateNote(@PathVariable("id") int id, @RequestBody Note note) {
-        noteService.updateNote(id, note);
-        return note;
+        return noteService.updateNote(id, note);
     }
 
 }

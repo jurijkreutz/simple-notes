@@ -1,26 +1,29 @@
 package com.codecool.simplenotes.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeId;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Note {
 
     public Note(String title, String content) {
         this.title = title;
         this.content = content;
-        this.id = instances++;
     }
 
-    private static int instances = 1;
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private int id;
+    private Integer id;
 
     private String title;
 
