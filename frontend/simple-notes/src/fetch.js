@@ -28,3 +28,15 @@ export async function removeNote(noteId) {
   const response = await axiosInstance.delete(`/api/notes/${noteId}`);
   return response.status;
 }
+
+export async function updateNote(noteId, title, content) {
+  const updatedNote = {
+      title: title,
+      content: content
+    }
+  return await axios
+    .put(`http://localhost:8080/api/notes/${noteId}`, updatedNote)
+    .then((response) => {
+      return response.status;
+    })
+}
