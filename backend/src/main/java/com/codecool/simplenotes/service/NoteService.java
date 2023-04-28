@@ -39,4 +39,9 @@ public class NoteService {
         }
         return null;
     }
+
+    public List<Note> getNotesByTitle(String title) {
+        return noteRepository.findNotesByTitleContainsIgnoreCase(title);
+    }
+
 }

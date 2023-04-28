@@ -38,4 +38,9 @@ public class NoteEndpoint {
         return noteService.updateNote(id, note);
     }
 
+    @GetMapping("/title/{title}")
+    public List<Note> getNotesByTitle(@PathVariable("title") String title) {
+        return noteService.getNotesByTitle(title);
+    }
+
 }
