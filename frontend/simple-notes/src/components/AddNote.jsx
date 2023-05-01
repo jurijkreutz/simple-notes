@@ -1,8 +1,11 @@
 import React from 'react'
 import { addNote } from '../fetch';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddNote({ updateNotes }) {
+
+    const navigate = useNavigate();
 
     const [inputData, setInputData] = useState({
         title: "",
@@ -23,6 +26,7 @@ export default function AddNote({ updateNotes }) {
         if (result == 200) {
           console.log('Successfully saved on server!');
           updateNotes();
+          navigate("/");
         }
     }
 

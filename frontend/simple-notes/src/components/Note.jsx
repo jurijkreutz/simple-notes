@@ -22,7 +22,7 @@ export default function Note({note, updateNotes}) {
     }
 
   return (
-    <div className="noteContainer">
+    <div className="note-container">
         <h2>{note.title}</h2>
         <p>{note.content}</p>
         <button onClick={removeNoteHandler}>Remove</button>
