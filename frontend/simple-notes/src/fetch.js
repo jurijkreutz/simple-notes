@@ -5,6 +5,20 @@ const axiosInstance = axios.create({
     withCredentials: false
   });
 
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers['Authorization'] = 'Bearer ' + token;
+      }
+      config.headers['Content-Type'] = 'application/json';
+      return config;
+    },
+    (error) => {
+      Promise.reject(error);
+    }
+  );
+
 
 export async function fetchNotes() {
     const response = await axiosInstance.get(`/api/notes`);
@@ -17,7 +31,7 @@ export async function addNote(title, content) {
         title: title,
         content: content
       }
-    return await axios
+    return await axiosInstance
       .post("http://localhost:8080/api/notes", newNote)
       .then((response) => {
         return response.status;
@@ -34,9 +48,22 @@ export async function updateNote(noteId, title, content) {
       title: title,
       content: content
     }
-  return await axios
+  return await axiosInstance
     .put(`http://localhost:8080/api/notes/${noteId}`, updatedNote)
     .then((response) => {
       return response.status;
     })
+}
+
+export async function login(email, password) {
+  const loginDetails = {
+    email: email,
+    password: password,
+  };
+  return await axiosInstance
+    .post("http://localhost:8080/api/auth/authenticate", loginDetails)
+    .then((response) => {
+      console.log(response);
+      return response;
+    });
 }

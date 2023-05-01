@@ -2,8 +2,9 @@ import React from 'react'
 import { addNote } from '../fetch';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Login from './Login';
 
-export default function AddNote({ updateNotes }) {
+export default function AddNote({ updateNotes, userLoggedIn, setUserLoggedIn }) {
 
     const navigate = useNavigate();
 
@@ -32,6 +33,7 @@ export default function AddNote({ updateNotes }) {
 
   return (
     <div className="add-note">
+        {userLoggedIn ? 
         <form>
           <label htmlFor="title">Title:</label><br/>
           <input type="text" id="title" name="title" value={inputData.title} onChange={handleChange}></input>
@@ -40,6 +42,8 @@ export default function AddNote({ updateNotes }) {
           <textarea name="content" cols="40" rows="5" value={inputData.content} onChange={handleChange}></textarea><br/>
           <input type="submit" onClick={addNewNote}></input>
         </form> 
+        : <Login setUserLoggedIn={setUserLoggedIn} />
+      }
     </div>
   )
 }

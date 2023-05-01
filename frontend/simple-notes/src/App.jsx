@@ -21,14 +21,16 @@ function App() {
     setNotes(await fetchNotes());
   }
 
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout/>}>
-            <Route index element={<NoteList notes={notes} updateNotes={updateNotes} />} />
-            <Route path="add-note" element={<AddNote notes={notes} updateNotes={updateNotes}/>} />
-          </Route>
+            <Route path="/" element={<Layout/>}>
+              <Route index element={<NoteList notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
+              <Route path="add-note" element={<AddNote notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
+            </Route>
         </Routes>
       </BrowserRouter>
     </>
