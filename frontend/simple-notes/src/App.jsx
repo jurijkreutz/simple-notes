@@ -21,13 +21,17 @@ function App() {
     setNotes(await fetchNotes());
   }
 
+  useEffect(() => {
+    setUserLoggedIn(localStorage.getItem('token') != null);
+  }, [])
+
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-            <Route path="/" element={<Layout/>}>
+              <Route path="/" element={<Layout userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />}>
               <Route index element={<NoteList notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
               <Route path="add-note" element={<AddNote notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
             </Route>

@@ -13,13 +13,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Configuration
 public class SecurityComponents {
@@ -55,11 +53,12 @@ public class SecurityComponents {
         return new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-                return APPLICATION_USERS
+                UserDetails userFromDatabase = APPLICATION_USERS
                         .stream()
                         .filter(userDetails -> userDetails.getUsername().equals(email))
                         .findFirst()
                         .orElseThrow(() -> new UsernameNotFoundException("No user with provided email found."));
+                return User.withUserDetails(userFromDatabase).build();
             }
         };
     }
