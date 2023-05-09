@@ -9,7 +9,7 @@ It is a project with a Java Spring Backend and a React Frontend. Users can log i
  - Spring Web MVC, Spring Data JPA, Spring Security
  - H2 Database
  - React
- - HTML, CSS
+ - Material UI Library
 
 ## Current State
 
