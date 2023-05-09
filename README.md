@@ -11,6 +11,25 @@ It is a project with a Java Spring Backend and a React Frontend. Users can log i
  - React
  - Material UI Library
 
+## Run project
+
+1. Clone the project
+```ssh
+git clone git@github.com:jurijkreutz/simple-notes.git
+```
+
+2. Start backend from the backend directory
+```ssh
+cd backend
+mvn spring-boot:run
+```
+
+3. Start frontend from the frontend directory
+```ssh
+cd frontend
+npm run dev
+```
+
 ## Current State
 
 ### Already done
