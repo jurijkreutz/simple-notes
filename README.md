@@ -1,6 +1,6 @@
 # Simple Notes
 
-This is an additional bonus project which I started working on during the `Advanced - Java Spring` module of the Codecool Full Stack Developer Coruse.
+This is an additional bonus project which I started working on during the `Advanced - Java Spring` module of the Codecool Full Stack Developer Course.
 
 It is a project with a Java Spring Backend and a React Frontend. Users can log in, add new notes and manage old ones.
 
