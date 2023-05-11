@@ -1,4 +1,4 @@
-package com.codecool.simplenotes.config;
+package com.codecool.simplenotes.config.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

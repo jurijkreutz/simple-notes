@@ -1,6 +1,6 @@
 package com.codecool.simplenotes.endpoint;
 
-import com.codecool.simplenotes.config.JwtUtils;
+import com.codecool.simplenotes.config.jwt.JwtUtils;
 import com.codecool.simplenotes.model.AuthenticationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5174")
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

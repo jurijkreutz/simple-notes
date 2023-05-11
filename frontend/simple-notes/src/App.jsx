@@ -3,6 +3,7 @@ import './App.css'
 import NoteList from './components/NoteList'
 import AddNote from './components/AddNote'
 import Layout from './components/Layout'
+import Login from './components/Login'
 import { fetchNotes } from './fetch'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -11,13 +12,16 @@ function App() {
   const [notes, setNotes] = useState([]);
 
   useEffect(() => {
-    async function getNotes() {
-      setNotes(await fetchNotes());
+    if (userLoggedIn) {
+      async function getNotes() {
+        setNotes(await fetchNotes());
+      }
+      getNotes();
     }
-    getNotes();
   }, [])
 
   const updateNotes = async () => {
+    console.log('fetching')
     setNotes(await fetchNotes());
   }
 
@@ -32,9 +36,10 @@ function App() {
       <BrowserRouter>
         <Routes>
               <Route path="/" element={<Layout userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />}>
-              <Route index element={<NoteList notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
-              <Route path="add-note" element={<AddNote notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
-            </Route>
+                <Route index element={<NoteList notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
+                <Route path="add-note" element={<AddNote notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
+                <Route path="login" element={<Login setUserLoggedIn={setUserLoggedIn} /> } />
+              </Route>
         </Routes>
       </BrowserRouter>
     </>

@@ -3,6 +3,7 @@ import { addNote } from '../fetch';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Login from './Login';
+import BodyBox from './BodyBox';
 
 export default function AddNote({ updateNotes, userLoggedIn, setUserLoggedIn }) {
 
@@ -32,18 +33,23 @@ export default function AddNote({ updateNotes, userLoggedIn, setUserLoggedIn }) 
     }
 
   return (
-    <div className="add-note">
-        {userLoggedIn ? 
+    <>
+      {userLoggedIn ? 
+      <BodyBox content={
+      <div className="add-note">
         <form>
           <label htmlFor="title">Title:</label><br/>
           <input type="text" id="title" name="title" value={inputData.title} onChange={handleChange}></input>
           <br/><br/>
           <label htmlFor="content">Content:</label><br/>
-          <textarea name="content" cols="40" rows="5" value={inputData.content} onChange={handleChange}></textarea><br/>
+          <textarea name="content" cols="40" rows="5" value={inputData.content} onChange={handleChange}></textarea>
+          <br/><br/>
           <input type="submit" onClick={addNewNote}></input>
         </form> 
-        : <Login setUserLoggedIn={setUserLoggedIn} />
+      </div>
+      } />
+      : <Login setUserLoggedIn={setUserLoggedIn} />
       }
-    </div>
+    </>
   )
 }

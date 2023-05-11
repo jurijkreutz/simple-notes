@@ -2,6 +2,8 @@ import React from 'react'
 import { useState } from 'react';
 import { login } from '../fetch';
 import { useNavigate } from 'react-router-dom';
+import BodyBox from './BodyBox';
+import InfoBox from './InfoBox';
 
 export default function Login( {setUserLoggedIn} ) {
 
@@ -35,7 +37,8 @@ export default function Login( {setUserLoggedIn} ) {
 
   return (
     <div>
-      <form>
+      <BodyBox content={
+        <form>
           <label htmlFor="email">E-Mail:</label><br/>
           <input type="text" id="email" name="email" value={inputData.email} onChange={handleChange}></input>
           <br/><br/>
@@ -43,7 +46,10 @@ export default function Login( {setUserLoggedIn} ) {
           <input type="text" id="password" name="password" value={inputData.password} onChange={handleChange}></input>
           <br></br><br></br>
           <input type="submit" onClick={loginHandler}></input>
-       </form> 
+        </form> }
+        >
+       </BodyBox>
+      <InfoBox text={'You are not logged in. Please log in to see & manage your notes.'} />
     </div>
   )
 }

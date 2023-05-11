@@ -1,4 +1,4 @@
-package com.codecool.simplenotes.config;
+package com.codecool.simplenotes.config.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

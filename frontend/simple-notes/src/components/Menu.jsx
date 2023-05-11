@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { AppBar, Toolbar, 
+        Typography } from '@mui/material';
 
 export default function Menu( {userLoggedIn, setUserLoggedIn} ) {
 
@@ -10,12 +12,18 @@ export default function Menu( {userLoggedIn, setUserLoggedIn} ) {
   }
 
   return (
-    <div className='menu-container'>
-      <ul className='menu'>
-        <li><Link to="/">All Notes</Link></li> 
-        <li><Link to="/add-note">Add Note</Link></li>
-        {userLoggedIn ? <li onClick={logoutUser}><a href="#">Logout</a></li> : ''}
-      </ul>
-    </div>
+    <AppBar position="static" className='menu-container'>
+        <Toolbar sx={{ gap: 5 }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Link to="/">All Notes</Link>
+          </Typography>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Link to="/add-note">Add Note</Link>
+          </Typography>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            {userLoggedIn ? <a onClick={logoutUser}>Logout</a> : <Link to="/login">Login</Link>}
+          </Typography>
+        </Toolbar>
+    </AppBar>
   )
 }
