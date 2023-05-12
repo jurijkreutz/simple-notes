@@ -68,3 +68,20 @@ export async function login(email, password) {
       return response;
     });
 }
+
+export async function register(email, password) {
+  const registerDetails = {
+    email: email,
+    password: password,
+  };
+  console.log(registerDetails);
+  return await axiosInstance
+    .post("http://localhost:8080/api/auth/register", registerDetails)
+    .catch((error) => {
+      return error.response;
+    })
+    .then((response) => {
+      console.log(response);
+      return response;
+    });
+}

@@ -4,6 +4,7 @@ import NoteList from './components/NoteList'
 import AddNote from './components/AddNote'
 import Layout from './components/Layout'
 import Login from './components/Login'
+import Register from './components/Register'
 import { fetchNotes } from './fetch'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -39,6 +40,7 @@ function App() {
                 <Route index element={<NoteList notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
                 <Route path="add-note" element={<AddNote notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
                 <Route path="login" element={<Login setUserLoggedIn={setUserLoggedIn} /> } />
+                <Route path="register" element={<Register/> } />
               </Route>
         </Routes>
       </BrowserRouter>

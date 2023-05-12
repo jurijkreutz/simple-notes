@@ -2,8 +2,8 @@ import React from 'react'
 import { useState } from 'react';
 import { login } from '../fetch';
 import { useNavigate } from 'react-router-dom';
-import BodyBox from './BodyBox';
-import InfoBox from './InfoBox';
+import BodyBox from './boxes/BodyBox';
+import WarningBox from './boxes/WarningBox';
 
 export default function Login( {setUserLoggedIn} ) {
 
@@ -28,7 +28,7 @@ export default function Login( {setUserLoggedIn} ) {
         if (result.status == 200) {
           console.log(result);
           console.log('Successfully logged in on server!');
-          localStorage.setItem('token', result.data);
+          localStorage.setItem('token', result.data.jwt);
           setUserLoggedIn(true);
           navigate("/");
         }
@@ -37,6 +37,7 @@ export default function Login( {setUserLoggedIn} ) {
 
   return (
     <div>
+      <WarningBox text={'You are not logged in. Please log in to see & manage your notes.'} />
       <BodyBox content={
         <form>
           <label htmlFor="email">E-Mail:</label><br/>
@@ -49,7 +50,6 @@ export default function Login( {setUserLoggedIn} ) {
         </form> }
         >
        </BodyBox>
-      <InfoBox text={'You are not logged in. Please log in to see & manage your notes.'} />
     </div>
   )
 }

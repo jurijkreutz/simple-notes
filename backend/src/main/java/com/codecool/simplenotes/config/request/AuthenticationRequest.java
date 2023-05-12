@@ -1,4 +1,4 @@
-package com.codecool.simplenotes.model;
+package com.codecool.simplenotes.config.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -23,6 +23,9 @@ export default function Menu( {userLoggedIn, setUserLoggedIn} ) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {userLoggedIn ? <a onClick={logoutUser}>Logout</a> : <Link to="/login">Login</Link>}
           </Typography>
+          {!userLoggedIn ? <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Link to="/register">Register</Link>
+          </Typography> : ''}
         </Toolbar>
     </AppBar>
   )
