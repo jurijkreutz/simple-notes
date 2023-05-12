@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Alert from '@mui/material/Alert';
 
-export default function InfoBox( {text} ) {
+export default function WarningBox( {text} ) {
   const [open, setOpen] = useState(true);
 
   return (

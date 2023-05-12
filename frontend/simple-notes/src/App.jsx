@@ -7,6 +7,7 @@ import Login from './components/Login'
 import Register from './components/Register'
 import { fetchNotes } from './fetch'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Snackbar } from '@mui/material'
 
 function App() {
 
@@ -32,6 +33,13 @@ function App() {
 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+  
+  const handleCloseSnackBar = (event, reason) => {
+    setSnackBarOpen(false);
+  };
+
   return (
     <>
       <BrowserRouter>
@@ -39,11 +47,17 @@ function App() {
               <Route path="/" element={<Layout userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />}>
                 <Route index element={<NoteList notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
                 <Route path="add-note" element={<AddNote notes={notes} updateNotes={updateNotes} userLoggedIn={userLoggedIn} setUserLoggedIn={setUserLoggedIn} />} />
-                <Route path="login" element={<Login setUserLoggedIn={setUserLoggedIn} /> } />
+                <Route path="login" element={<Login setUserLoggedIn={setUserLoggedIn} setSnackBarOpen={setSnackBarOpen} setSnackMessage={setSnackMessage} /> } />
                 <Route path="register" element={<Register/> } />
               </Route>
         </Routes>
       </BrowserRouter>
+      <Snackbar
+        open={snackBarOpen}
+        onClose={handleCloseSnackBar}
+        autoHideDuration={6000}
+        message={snackMessage}
+      />
     </>
   )
 }

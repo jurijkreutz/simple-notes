@@ -2,10 +2,10 @@ import React from 'react'
 import { addNote } from '../fetch';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Login from './Login';
-import BodyBox from './BodyBox';
+import BodyBox from './boxes/BodyBox';
+import WarningBox from './boxes/WarningBox';
 
-export default function AddNote({ updateNotes, userLoggedIn, setUserLoggedIn }) {
+export default function AddNote({ updateNotes, userLoggedIn }) {
 
     const navigate = useNavigate();
 
@@ -48,7 +48,7 @@ export default function AddNote({ updateNotes, userLoggedIn, setUserLoggedIn }) 
         </form> 
       </div>
       } />
-      : <Login setUserLoggedIn={setUserLoggedIn} />
+      : <WarningBox text={'You are not logged in. Please log in to see & manage your notes.'} />
       }
     </>
   )

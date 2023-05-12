@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { login } from '../fetch';
 import { useNavigate } from 'react-router-dom';
 import BodyBox from './boxes/BodyBox';
-import WarningBox from './boxes/WarningBox';
+import InfoBox from './boxes/InfoBox';
 
-export default function Login( {setUserLoggedIn} ) {
+export default function Login( { setUserLoggedIn, setSnackBarOpen, setSnackMessage } ) {
 
   const navigate = useNavigate();
 
@@ -30,6 +30,8 @@ export default function Login( {setUserLoggedIn} ) {
           console.log('Successfully logged in on server!');
           localStorage.setItem('token', result.data.jwt);
           setUserLoggedIn(true);
+          setSnackMessage(`Successfully logged in as: ${result.data.email}`);
+          setSnackBarOpen(true);
           navigate("/");
         }
     }
@@ -37,7 +39,7 @@ export default function Login( {setUserLoggedIn} ) {
 
   return (
     <div>
-      <WarningBox text={'You are not logged in. Please log in to see & manage your notes.'} />
+      <InfoBox text={'Log in with E-Mail & Password to manage your notes.'} />
       <BodyBox content={
         <form>
           <label htmlFor="email">E-Mail:</label><br/>
