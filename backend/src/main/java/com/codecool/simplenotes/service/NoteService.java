@@ -5,7 +5,6 @@ import com.codecool.simplenotes.model.Note;
 import com.codecool.simplenotes.model.User;
 import com.codecool.simplenotes.model.repository.NoteRepository;
 import com.codecool.simplenotes.model.repository.UserRepository;
-import jakarta.el.PropertyNotFoundException;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,6 @@ public class NoteService {
         Optional<User> user = getCurrentUser();
         if (user.isPresent()) {
             user.get().getNotes().add(note);
-            noteRepository.save(note);
             userRepository.save(user.get());
             return note;
         }
@@ -56,9 +54,6 @@ public class NoteService {
                 user.get().getNotes().removeIf(note ->
                         Objects.equals(note.getId(), noteId));
                 userRepository.save(user.get());
-                if (noteRepository.findById(noteId).isPresent()) {
-                    noteRepository.deleteById(noteId);
-                }
             }
         }
         else {
@@ -66,13 +61,19 @@ public class NoteService {
         }
     }
 
-    //TODO: add updating by user (user A shouldn't be able to update note of user B)
     public Note updateNote(int id, Note updatedNote) {
-        Optional<Note> noteToUpdate = noteRepository.findById(id);
-        if (noteToUpdate.isPresent()) {
-            noteToUpdate.get().setTitle(updatedNote.getTitle());
-            noteToUpdate.get().setContent(updatedNote.getContent());
-            return noteRepository.save(noteToUpdate.get());
+        Optional<User> user = getCurrentUser();
+        if (user.isPresent()) {
+            Optional<Note> noteToUpdate = user.get().getNotes()
+                    .stream()
+                    .filter(note -> note.getId() == id)
+                    .findFirst();
+            if (noteToUpdate.isPresent()) {
+                noteToUpdate.get().setTitle(updatedNote.getTitle());
+                noteToUpdate.get().setContent(updatedNote.getContent());
+                userRepository.save(user.get());
+                return noteToUpdate.get();
+            }
         }
         return null;
     }
