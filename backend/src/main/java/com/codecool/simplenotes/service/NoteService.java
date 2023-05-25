@@ -5,6 +5,7 @@ import com.codecool.simplenotes.model.Note;
 import com.codecool.simplenotes.model.User;
 import com.codecool.simplenotes.model.repository.NoteRepository;
 import com.codecool.simplenotes.model.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class NoteService {
 
     private final NoteRepository noteRepository;
@@ -27,7 +29,10 @@ public class NoteService {
 
     public List<Note> getNotes() {
         Optional<User> user = getCurrentUser();
-        return user.map(User::getNotes).orElse(null);
+        if (user.isPresent()) {
+            return user.get().getNotes();
+        }
+        throw new ObjectNotFoundException(User.class, "User not found.");
     }
 
     public Note createNote(Note note) {
@@ -38,7 +43,7 @@ public class NoteService {
             return note;
         }
         else {
-            throw new ObjectNotFoundException(User.class, "User");
+            throw new ObjectNotFoundException(User.class, "User not found.");
         }
     }
 
@@ -55,9 +60,12 @@ public class NoteService {
                         Objects.equals(note.getId(), noteId));
                 userRepository.save(user.get());
             }
+            else {
+                throw new ObjectNotFoundException(Note.class, "Note to be removed not found.");
+            }
         }
         else {
-            throw new ObjectNotFoundException(User.class, "User");
+            throw new ObjectNotFoundException(User.class, "User not found.");
         }
     }
 
@@ -74,8 +82,11 @@ public class NoteService {
                 userRepository.save(user.get());
                 return noteToUpdate.get();
             }
+            else {
+                throw new ObjectNotFoundException(Note.class, "Note to be updated not found.");
+            }
         }
-        return null;
+        throw new ObjectNotFoundException(User.class, "User not found.");
     }
 
     public List<Note> getNotesByTitle(String title) {
