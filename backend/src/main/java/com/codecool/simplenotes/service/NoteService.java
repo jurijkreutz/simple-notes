@@ -7,6 +7,7 @@ import com.codecool.simplenotes.model.repository.NoteRepository;
 import com.codecool.simplenotes.model.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -49,24 +50,19 @@ public class NoteService {
 
     public void removeNote(int id) {
         Optional<User> user = getCurrentUser();
-        if (user.isPresent()) {
-            Optional<Note> foundNote = user.get().getNotes()
-                    .stream()
-                    .filter(note -> note.getId() == id)
-                    .findFirst();
-            if (foundNote.isPresent()) {
-                Integer noteId = foundNote.get().getId();
-                user.get().getNotes().removeIf(note ->
-                        Objects.equals(note.getId(), noteId));
-                userRepository.save(user.get());
-            }
-            else {
-                throw new ObjectNotFoundException(Note.class, "Note to be removed not found.");
-            }
-        }
-        else {
+        if (user.isEmpty()) {
             throw new ObjectNotFoundException(User.class, "User not found.");
         }
+        Optional<Note> foundNote = user.get().getNotes()
+                .stream()
+                .filter(note -> note.getId() == id)
+                .findFirst();
+        if (foundNote.isEmpty()) {
+            throw new ObjectNotFoundException(Note.class, "Note to be removed not found.");
+        }
+        user.get().getNotes().removeIf(note ->
+                Objects.equals(note.getId(), id));
+        userRepository.save(user.get());
     }
 
     public Note updateNote(int id, Note updatedNote) {
@@ -95,11 +91,14 @@ public class NoteService {
 
 
     private Optional<User> getCurrentUser() {
-        UserDetailsImplementation userDetails = (UserDetailsImplementation) SecurityContextHolder
+        Authentication authentication = SecurityContextHolder
                 .getContext()
-                .getAuthentication()
-                .getPrincipal();
-        return userRepository.findById(userDetails.getId());
+                .getAuthentication();
+        if (authentication != null) {
+            UserDetailsImplementation userDetails = (UserDetailsImplementation) authentication.getPrincipal();
+            return userRepository.findById(userDetails.getId());
+        }
+        return Optional.empty();
     }
 
 }
