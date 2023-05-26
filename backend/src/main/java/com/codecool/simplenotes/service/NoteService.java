@@ -30,22 +30,20 @@ public class NoteService {
 
     public List<Note> getNotes() {
         Optional<User> user = getCurrentUser();
-        if (user.isPresent()) {
-            return user.get().getNotes();
+        if (user.isEmpty()) {
+            throw new ObjectNotFoundException(User.class, "User not found.");
         }
-        throw new ObjectNotFoundException(User.class, "User not found.");
+        return user.get().getNotes();
     }
 
     public Note createNote(Note note) {
         Optional<User> user = getCurrentUser();
-        if (user.isPresent()) {
-            user.get().getNotes().add(note);
-            userRepository.save(user.get());
-            return note;
-        }
-        else {
+        if (user.isEmpty()) {
             throw new ObjectNotFoundException(User.class, "User not found.");
         }
+        user.get().getNotes().add(note);
+        userRepository.save(user.get());
+        return note;
     }
 
     public void removeNote(int id) {
@@ -67,22 +65,20 @@ public class NoteService {
 
     public Note updateNote(int id, Note updatedNote) {
         Optional<User> user = getCurrentUser();
-        if (user.isPresent()) {
-            Optional<Note> noteToUpdate = user.get().getNotes()
-                    .stream()
-                    .filter(note -> note.getId() == id)
-                    .findFirst();
-            if (noteToUpdate.isPresent()) {
-                noteToUpdate.get().setTitle(updatedNote.getTitle());
-                noteToUpdate.get().setContent(updatedNote.getContent());
-                userRepository.save(user.get());
-                return noteToUpdate.get();
-            }
-            else {
-                throw new ObjectNotFoundException(Note.class, "Note to be updated not found.");
-            }
+        if (user.isEmpty()) {
+            throw new ObjectNotFoundException(User.class, "User not found.");
         }
-        throw new ObjectNotFoundException(User.class, "User not found.");
+        Optional<Note> noteToUpdate = user.get().getNotes()
+                .stream()
+                .filter(note -> note.getId() == id)
+                .findFirst();
+        if (noteToUpdate.isEmpty()) {
+            throw new ObjectNotFoundException(Note.class, "Note to be updated not found.");
+        }
+        noteToUpdate.get().setTitle(updatedNote.getTitle());
+        noteToUpdate.get().setContent(updatedNote.getContent());
+        userRepository.save(user.get());
+        return noteToUpdate.get();
     }
 
     public List<Note> getNotesByTitle(String title) {

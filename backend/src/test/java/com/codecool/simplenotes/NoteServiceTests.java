@@ -1,112 +1,153 @@
 package com.codecool.simplenotes;
 
+import com.codecool.simplenotes.config.UserDetailsImplementation;
+import com.codecool.simplenotes.config.UserDetailsServiceImplementation;
 import com.codecool.simplenotes.model.Note;
-import com.codecool.simplenotes.model.repository.NoteRepository;
 import com.codecool.simplenotes.service.NoteService;
+import org.hibernate.ObjectNotFoundException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+@SpringBootTest
 public class NoteServiceTests {
 
-    @Test
-    public void getNotes_NoNoteAdded_ReturnsEmptyList() {
-        NoteRepository repository = Mockito.mock(NoteRepository.class);
-        Mockito.when(repository.findAll()).thenReturn(new ArrayList<>());
-        NoteService service = new NoteService(repository);
+    @Autowired
+    private NoteService noteService;
 
-        List<Note> noteList = service.getNotes();
+    @MockBean
+    private UserDetailsServiceImplementation userDetailsService;
 
-        Assertions.assertEquals(new ArrayList<>(), noteList);
+    @BeforeEach
+    public void setUp() {
+        UserDetailsImplementation userDetailsImplementation = new UserDetailsImplementation(
+                1,
+                "test@test.com",
+                "password",
+                new ArrayList<>(List.of(new SimpleGrantedAuthority("ROLE_USER")))
+        );
+
+        Mockito.when(userDetailsService.loadUserByUsername(Mockito.anyString()))
+                .thenReturn(userDetailsImplementation);
+
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        userDetailsImplementation,
+                        null,
+                        userDetailsImplementation.getAuthorities()));
+    }
+
+    @AfterEach
+    public void shutDown() {
+        try {
+            List<Note> notes = noteService.getNotes();
+            for (Note note : notes) {
+                noteService.removeNote(note.getId());
+            }
+        } catch (ObjectNotFoundException ignored) {
+        }
     }
 
     @Test
-    public void getNotes_OneNoteAdded_ReturnsListWithOneNote() {
-        NoteRepository repository = Mockito.mock(NoteRepository.class);
-        Note newNote = new Note("test", "testcontent");
-        List<Note> simulatedList = new ArrayList<>();
-        simulatedList.add(newNote);
-        Mockito.when(repository.findAll()).thenReturn(simulatedList);
-        NoteService service = new NoteService(repository);
+    public void getNotes_Empty_ReturnsEmptyList() {
+        List<Note> result = noteService.getNotes();
 
-        List<Note> noteList = service.getNotes();
-
-        Assertions.assertEquals(simulatedList, noteList);
+        List<Note> expected = new ArrayList<>();
+        Assertions.assertIterableEquals(expected, result);
     }
 
     @Test
-    public void createNote_AddOneNote_CallsRepositoryMethod() {
-        NoteRepository repository = Mockito.mock(NoteRepository.class);
-        NoteService service = new NoteService(repository);
+    public void getNotes_WithExistingNotes_ReturnsCorrectList() {
+        Note testNote = new Note("testTitle", "testContent");
+        noteService.createNote(testNote);
 
-        Note noteToAdd = new Note("test", "testnote");
+        Note result = noteService.getNotes().get(0);
 
-        service.createNote(noteToAdd);
-
-        Mockito.verify(repository).save(noteToAdd);
+        Assertions.assertEquals(testNote.getTitle(), result.getTitle());
+        Assertions.assertEquals(testNote.getContent(), result.getContent());
     }
 
     @Test
-    public void createNote_AddOneNote_ReturnsAddedNote() {
-        NoteRepository repository = Mockito.mock(NoteRepository.class);
-        NoteService service = new NoteService(repository);
-        Note noteToAdd = new Note("test", "testnote");
+    public void getNotes_WithoutUser_ThrowsException() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(null);
 
-        Note addedNote = service.createNote(noteToAdd);
-
-        Assertions.assertEquals(noteToAdd, addedNote);
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> {noteService.getNotes();});
     }
 
     @Test
-    public void removeNote_RemoveOneNote_CallsRepositoryMethod() {
-        NoteRepository repository = Mockito.mock(NoteRepository.class);
-        NoteService service = new NoteService(repository);
-        int id = 1;
+    public void createNote_WithUser_ReturnsNote() {
+        Note noteToCreate = new Note("Test Title", "Test Content");
 
-        service.removeNote(id);
+        Note result = noteService.createNote(noteToCreate);
 
-        Mockito.verify(repository).deleteById(id);
+        Assertions.assertEquals(noteToCreate, result);
     }
 
     @Test
-    public void updateNote_UpdateOneNote_ReturnsUpdatedNote() {
-        NoteRepository repository = Mockito.mock(NoteRepository.class);
-        NoteService service = new NoteService(repository);
-        Note noteToUpdate = new Note("testtitle", "testcontent");
-        int idToUpdate = 1;
-        noteToUpdate.setId(idToUpdate);
-        Note updatedNote = new Note("testtitle1", "testcontent1");
-        Mockito.when(repository.findById(idToUpdate)).thenReturn(Optional.of(noteToUpdate));
-        Mockito.when(repository.save(noteToUpdate)).thenReturn(updatedNote);
+    public void createNote_WithoutUser_ThrowsException() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(null);
 
-        Note returnedNote = service.updateNote(idToUpdate, updatedNote);
+        Note noteToCreate = new Note("Test Title", "Test Content");
 
-        Assertions.assertEquals("testtitle1", returnedNote.getTitle());
-        Assertions.assertEquals("testcontent1", returnedNote.getContent());
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> {noteService.createNote(noteToCreate);});
     }
 
     @Test
-    public void getNotesByTitle_SearchingForNotesWithTestInTitle_ReturnsOneNote() {
-        NoteRepository repository = Mockito.mock(NoteRepository.class);
-        NoteService service = new NoteService(repository);
-        Note noteToFind = new Note("title test title", "blahblah");
-        int idForNoteToFind = 1;
-        noteToFind.setId(idForNoteToFind);
-        Note noteNotToFind = new Note("title 123 title", "blahblah");
-        int idForNoteNotToFind = 2;
-        noteNotToFind.setId(idForNoteNotToFind);
-        List<Note> correctReturnList = new ArrayList<>();
-        correctReturnList.add(noteToFind);
-        Mockito.when(repository.findNotesByTitleContainsIgnoreCase("title")).thenReturn(correctReturnList);
+    public void removeNote_OneNoteCreatedAndRemoved_RemovesNote() {
+        Note noteToCreate = new Note("Test Title", "Test Content");
+        noteToCreate.setId(1);
+        noteService.createNote(noteToCreate);
 
-        List<Note> returnedList = service.getNotesByTitle("title");
+        noteService.removeNote(1);
 
-        Assertions.assertEquals(correctReturnList, returnedList);
+        List<Note> result = noteService.getNotes();
+        List<Note> expected = new ArrayList<>();
+        Assertions.assertIterableEquals(expected, result);
+    }
+
+    @Test
+    public void removeNote_WithoutUser_ThrowsException() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(null);
+
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> {noteService.removeNote(1);});
+    }
+
+    @Test
+    public void updateNote_ValidNoteId_ReturnsUpdatedContent() {
+        Note noteToCreate = new Note("Test Title", "Test Content");
+        noteToCreate.setId(1);
+        noteService.createNote(noteToCreate);
+
+        Note updatedContent = new Note("Test Title", "Updated Content");
+        Note result = noteService.updateNote(1, updatedContent);
+
+        Assertions.assertEquals(updatedContent.getContent(), result.getContent());
+    }
+
+    @Test
+    public void updateNote_InvalidNoteId_ThrowsException() {
+        Note noteToCreate = new Note("Test Title", "Test Content");
+        noteToCreate.setId(1);
+        noteService.createNote(noteToCreate);
+        Note updatedContent = new Note("Test Title", "Updated Content");
+
+        Assertions.assertThrows(ObjectNotFoundException.class, () -> {noteService.updateNote(2, updatedContent);});
     }
 
 }
