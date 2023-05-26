@@ -2,11 +2,13 @@ package com.codecool.simplenotes;
 
 import com.codecool.simplenotes.model.Note;
 import com.codecool.simplenotes.model.repository.NoteRepository;
+import com.codecool.simplenotes.service.InitService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,9 @@ public class RepositoryTests {
 
     @Autowired
     private TestEntityManager entityManager;
+
+    @MockBean
+    private InitService initService;
 
     @Test
     public void findNotesByTitleContainsIgnoreCase_NotesWithSearchQueryExisting_ReturnsCorrectNote() {
