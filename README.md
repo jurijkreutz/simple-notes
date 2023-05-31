@@ -34,18 +34,15 @@ npm run dev
 
 ### Already done
 
-- Simple React Frontend
+- React Frontend with Register Page, Login Page, Note Overview, Add Note Page
 - Spring Backend with endpoints for CRUD operations
-- Spring Security with In-Memory-Users
+- Spring Security with H2 DB Users
 - JWT handling for Spring Security
-- Spring Data with H2 DB for saving notes (and soon, users)
-- Tests covering the current backend
+- Spring Data with H2 DB for saving notes / users
+- Unit Tests covering the current backend
 
 ### To Do
 
-- Remove In-Memory-Users (move to database)
-- Add possibility for new Users to register
-- Add different roles (ADMIN, USER)
 - Dockerize
 
 ## Screenshots
